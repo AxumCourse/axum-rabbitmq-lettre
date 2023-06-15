@@ -1,4 +1,7 @@
-use axum_rabbitmq_lettre::{rabbitmq::basic, Config};
+use axum_rabbitmq_lettre::{
+    rabbitmq::{basic, topic},
+    Config,
+};
 use dotenv::dotenv;
 use lapin::{message::DeliveryResult, options::BasicAckOptions};
 
@@ -8,10 +11,15 @@ async fn main() {
     tracing_subscriber::fmt().init();
 
     let cfg = Config::from_env().unwrap();
+    const QUEUE_NAME: &str = "AXUM-RS";
+    const EXCHANGE_NAME: &str = "USER-REGISTER";
+    const ROUTING_KEY: &str = "AXUM-RS";
 
-    basic::receive(
+    topic::receive(
         &cfg.rabbitmq.dsn,
-        "AXUM-RS",
+        EXCHANGE_NAME,
+        QUEUE_NAME,
+        ROUTING_KEY,
         "AXUM-RS-CONSUMER",
         move |delivery: DeliveryResult| async move {
             tracing::debug!("aaa");
