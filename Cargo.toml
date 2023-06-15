@@ -9,3 +9,14 @@ homepage = "https://axum.rs"
 description = "AXUM和消息队列实现邮件激活"
 
 [dependencies]
+tokio = { version = "1", features = ["full"]}
+axum="0.6"
+serde = {version="1", features=["derive"]}
+dotenv = "0.15"
+config = "0.13"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+# rabbitmq
+lapin = "2"
+tokio-executor-trait = "2"
+tokio-reactor-trait = "1"
