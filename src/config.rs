@@ -13,9 +13,17 @@ pub struct RabbitMQConfig {
 }
 
 #[derive(Deserialize)]
+pub struct EmailConfig {
+    pub username: String,
+    pub password: String,
+    pub host: String,
+}
+
+#[derive(Deserialize)]
 pub struct Config {
     pub web: WebConfig,
     pub rabbitmq: RabbitMQConfig,
+    pub email: EmailConfig,
 }
 
 impl Config {

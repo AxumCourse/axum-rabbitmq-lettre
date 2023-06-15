@@ -4,6 +4,7 @@ use axum::response::IntoResponse;
 pub enum Kind {
     Config,
     RabbitMQ,
+    Email,
 }
 
 #[derive(Debug)]
@@ -48,6 +49,18 @@ impl From<config::ConfigError> for Error {
 impl From<lapin::Error> for Error {
     fn from(e: lapin::Error) -> Self {
         Self::with_cause(Kind::RabbitMQ, Box::new(e))
+    }
+}
+
+impl From<lettre::error::Error> for Error {
+    fn from(e: lettre::error::Error) -> Self {
+        Self::with_cause(Kind::Email, Box::new(e))
+    }
+}
+
+impl From<lettre::transport::smtp::Error> for Error {
+    fn from(e: lettre::transport::smtp::Error) -> Self {
+        Self::with_cause(Kind::Email, Box::new(e))
     }
 }
 

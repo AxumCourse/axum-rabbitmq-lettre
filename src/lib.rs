@@ -1,5 +1,7 @@
 mod config;
+pub mod email;
 mod err;
+pub mod model;
 pub mod rabbitmq;
 
 pub use crate::config::*;
