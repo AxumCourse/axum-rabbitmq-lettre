@@ -1,0 +1,11 @@
+[package]
+name = "axum-rabbitmq-lettre"
+version = "0.1.0"
+edition = "2021"
+authors = ["axum.rs <team@axum.rs>"]
+license = "MIT"
+repository = "https://github.com/AxumCourse/axum-rabbitmq-lettre"
+homepage = "https://axum.rs"
+description = "AXUM和消息队列实现邮件激活"
+
+[dependencies]
