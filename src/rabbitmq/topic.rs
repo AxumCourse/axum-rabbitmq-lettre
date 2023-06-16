@@ -3,12 +3,9 @@ use lapin::{
         BasicConsumeOptions, BasicPublishOptions, ExchangeDeclareOptions, QueueBindOptions,
         QueueDeclareOptions,
     },
-    publisher_confirm::Confirmation,
     types::FieldTable,
     BasicProperties, Connection, ConnectionProperties, ConsumerDelegate,
 };
-
-use crate::{Error, Result};
 
 pub async fn send(
     dsn: &str,
@@ -16,15 +13,13 @@ pub async fn send(
     queue_name: &str,
     routing_key: &str,
     payload: &str,
-) -> Result<Confirmation> {
+) -> Result<(), lapin::Error> {
     let options = ConnectionProperties::default()
         .with_executor(tokio_executor_trait::Tokio::current())
         .with_reactor(tokio_reactor_trait::Tokio);
 
-    let conn = Connection::connect(dsn, options)
-        .await
-        .map_err(Error::from)?;
-    let chan = conn.create_channel().await.map_err(Error::from)?;
+    let conn = Connection::connect(dsn, options).await?;
+    let chan = conn.create_channel().await?;
 
     chan.exchange_declare(
         exchange,
@@ -32,8 +27,7 @@ pub async fn send(
         ExchangeDeclareOptions::default(),
         FieldTable::default(),
     )
-    .await
-    .map_err(Error::from)?;
+    .await?;
 
     let queue = chan
         .queue_declare(
@@ -41,8 +35,7 @@ pub async fn send(
             QueueDeclareOptions::default(),
             FieldTable::default(),
         )
-        .await
-        .map_err(Error::from)?;
+        .await?;
 
     chan.queue_bind(
         queue.name().as_str(),
@@ -51,8 +44,7 @@ pub async fn send(
         QueueBindOptions::default(),
         FieldTable::default(),
     )
-    .await
-    .map_err(Error::from)?;
+    .await?;
 
     let payload = payload.as_bytes();
 
@@ -63,10 +55,9 @@ pub async fn send(
         payload,
         BasicProperties::default(),
     )
-    .await
-    .map_err(Error::from)?
-    .await
-    .map_err(Error::from)
+    .await?
+    .await?;
+    Ok(())
 }
 
 pub async fn receive<D: ConsumerDelegate + 'static>(
@@ -76,15 +67,13 @@ pub async fn receive<D: ConsumerDelegate + 'static>(
     routing_key: &str,
     tag: &str,
     delegate: D,
-) -> Result<()> {
+) -> Result<(), lapin::Error> {
     let options = ConnectionProperties::default()
         .with_executor(tokio_executor_trait::Tokio::current())
         .with_reactor(tokio_reactor_trait::Tokio);
 
-    let conn = Connection::connect(dsn, options)
-        .await
-        .map_err(Error::from)?;
-    let chan = conn.create_channel().await.map_err(Error::from)?;
+    let conn = Connection::connect(dsn, options).await?;
+    let chan = conn.create_channel().await?;
 
     chan.exchange_declare(
         exchange,
@@ -92,8 +81,7 @@ pub async fn receive<D: ConsumerDelegate + 'static>(
         ExchangeDeclareOptions::default(),
         FieldTable::default(),
     )
-    .await
-    .map_err(Error::from)?;
+    .await?;
 
     let queue = chan
         .queue_declare(
@@ -101,8 +89,7 @@ pub async fn receive<D: ConsumerDelegate + 'static>(
             QueueDeclareOptions::default(),
             FieldTable::default(),
         )
-        .await
-        .map_err(Error::from)?;
+        .await?;
 
     chan.queue_bind(
         queue.name().as_str(),
@@ -111,8 +98,7 @@ pub async fn receive<D: ConsumerDelegate + 'static>(
         QueueBindOptions::default(),
         FieldTable::default(),
     )
-    .await
-    .map_err(Error::from)?;
+    .await?;
 
     let consumer = chan
         .basic_consume(
@@ -121,12 +107,11 @@ pub async fn receive<D: ConsumerDelegate + 'static>(
             BasicConsumeOptions::default(),
             FieldTable::default(),
         )
-        .await
-        .map_err(Error::from)?;
+        .await?;
 
     consumer.set_delegate(delegate);
 
-    conn.run().map_err(Error::from)
+    conn.run()
 }
 
 #[cfg(test)]

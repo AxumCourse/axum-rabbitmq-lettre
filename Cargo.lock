@@ -241,6 +241,7 @@ dependencies = [
  "lapin",
  "lettre",
  "serde",
+ "serde_json",
  "tokio",
  "tokio-executor-trait",
  "tokio-reactor-trait",

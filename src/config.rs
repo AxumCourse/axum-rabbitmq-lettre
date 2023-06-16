@@ -1,25 +1,28 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::{Error, Result};
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct WebConfig {
     pub addr: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct RabbitMQConfig {
     pub dsn: String,
+    pub exchange_name: String,
+    pub queue_name: String,
+    pub routing_key: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize, Default, Clone)]
 pub struct EmailConfig {
     pub username: String,
     pub password: String,
     pub host: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct Config {
     pub web: WebConfig,
     pub rabbitmq: RabbitMQConfig,

@@ -1,7 +1,9 @@
 use lettre::{message::header::ContentType, Message};
+use serde::Deserialize;
 
 use crate::{Error, Result};
 
+#[derive(Default, Deserialize)]
 pub struct Email {
     pub from: String,
     pub to: String,

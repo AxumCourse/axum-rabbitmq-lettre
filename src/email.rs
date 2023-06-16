@@ -20,7 +20,7 @@ pub fn sync_send(cfg: &EmailConfig, m: &model::email::Email) -> Result<Response>
 }
 
 /// 异步发送
-pub async fn send(cfg: &EmailConfig, m: &model::email::Email) -> Result<Response> {
+pub async fn send(cfg: EmailConfig, m: model::email::Email) -> Result<Response> {
     let message = m.to_message()?;
 
     let creds = Credentials::new(cfg.username.clone(), cfg.password.clone());
@@ -67,7 +67,7 @@ mod test {
             subject: format!("试试异步发送"),
             body: format!("你好呀，这是用lettre异步发送的邮件！"),
         };
-        let resp = super::send(&cfg, &m).await.unwrap();
+        let resp = super::send(cfg, m).await.unwrap();
         tracing::info!("{:?}", resp);
     }
 }

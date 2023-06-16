@@ -5,6 +5,7 @@ pub enum Kind {
     Config,
     RabbitMQ,
     Email,
+    Serde,
 }
 
 #[derive(Debug)]
@@ -61,6 +62,12 @@ impl From<lettre::error::Error> for Error {
 impl From<lettre::transport::smtp::Error> for Error {
     fn from(e: lettre::transport::smtp::Error) -> Self {
         Self::with_cause(Kind::Email, Box::new(e))
+    }
+}
+
+impl From<serde_json::Error> for Error {
+    fn from(e: serde_json::Error) -> Self {
+        Self::with_cause(Kind::Serde, Box::new(e))
     }
 }
 
