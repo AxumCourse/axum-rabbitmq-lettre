@@ -1,0 +1,9 @@
+WEB.ADDR=127.0.0.1:9527
+RABBITMQ.DSN="amqp://127.0.0.1:5672"
+RABBITMQ.EXCHANGE_NAME='axum-rs'
+RABBITMQ.QUEUE_NAME='user-register'
+RABBITMQ.ROUTING_KEY='active-code'
+EMAIL.USERNAME='<你的邮箱地址>'
+EMAIL.PASSWORD='<你的邮箱密码>'
+EMAIL.HOST='<你的邮箱SMTP地址>'
+RUST_LOG='axum_rabbitmq_lettre=debug'
